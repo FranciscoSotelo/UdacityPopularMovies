@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -21,6 +20,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements PostersAdapter.ListItemClickListener {
     private PostersAdapter mAdapter;
     private RecyclerView mPosterList;
+
+    private static final String API_KEY = BuildConfig.API_KEY;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +58,7 @@ public class MainActivity extends AppCompatActivity implements PostersAdapter.Li
     }
 
     private void MakeMoviesDiscoverQuery(String baseURL){
-        String keyParam = getString(R.string.API_key);
-
-        URL url = NetworkUtils.buildUrl(baseURL, keyParam);
+        URL url = NetworkUtils.buildUrl(baseURL, API_KEY);
 
         new MoviesDiscoveryQueryTask().execute(url);
     }
