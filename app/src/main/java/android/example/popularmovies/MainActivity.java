@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements PostersAdapter.Li
         mPosterList.setLayoutManager(layoutManager);
         mPosterList.setHasFixedSize(false);
 
-        MakeMoviesDiscoverQuery(getString(R.string.popularity_sort_param) + getString(R.string.desc_sort_subparam));
+        MakeMoviesDiscoverQuery(getString(R.string.movie_database_baseURL_popularity));
     }
 
     @Override
@@ -46,21 +46,19 @@ public class MainActivity extends AppCompatActivity implements PostersAdapter.Li
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuItemSelected = item.getItemId();
         if(menuItemSelected == R.id.action_most_popular){
-            MakeMoviesDiscoverQuery(getString(R.string.popularity_sort_param) + getString(R.string.desc_sort_subparam));
+            MakeMoviesDiscoverQuery(getString(R.string.movie_database_baseURL_popularity));
         }
         else if(menuItemSelected == R.id.action_top_rated){
-            MakeMoviesDiscoverQuery(getString(R.string.vote_sort_param) + getString(R.string.desc_sort_subparam));
+            MakeMoviesDiscoverQuery(getString(R.string.movie_database_baseURL_top_rated));
 
         }
         return true;
     }
 
-    private void MakeMoviesDiscoverQuery(String sort){
-        String baseURL = getString(R.string.movie_database_baseURL);
+    private void MakeMoviesDiscoverQuery(String baseURL){
         String keyParam = getString(R.string.API_key);
-        String sortParam = sort;
 
-        URL url = NetworkUtils.buildUrl(baseURL, keyParam, sortParam);
+        URL url = NetworkUtils.buildUrl(baseURL, keyParam);
 
         new MoviesDiscoveryQueryTask().execute(url);
     }

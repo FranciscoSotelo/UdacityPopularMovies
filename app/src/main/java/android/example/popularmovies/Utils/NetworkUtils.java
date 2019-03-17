@@ -11,13 +11,11 @@ import java.util.Scanner;
 
 public class NetworkUtils {
     final static String PARAM_APIKEY = "api_key";
-    final static String PARAM_SORT = "sort_by";
 
-    public static URL buildUrl(String baseURL, String APIKey, String sortby)
+    public static URL buildUrl(String baseURL, String APIKey)
     {
         Uri builtUri = Uri.parse(baseURL).buildUpon()
                 .appendQueryParameter(PARAM_APIKEY, APIKey)
-                .appendQueryParameter(PARAM_SORT, sortby)
                 .build();
 
         URL url = null;

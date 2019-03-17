@@ -4,11 +4,8 @@
 
     <string name="app_name">Popular Movies</string>
     <string name="image_database_baseURL">http://image.tmdb.org/t/p/</string>
-    <string name="movie_database_baseURL">https://api.themoviedb.org/3/discover/movie</string>
-    <string name="popularity_sort_param">popularity</string>
-    <string name="vote_sort_param">vote_average</string>
-    <string name="desc_sort_subparam">.desc</string>
-    <string name="asc_sort_subparam">.asc</string>
+    <string name="movie_database_baseURL_popularity">https://api.themoviedb.org/3/movie/popular</string>
+    <string name="movie_database_baseURL_top_rated">https://api.themoviedb.org/3/movie/top_rated</string>
     <string name="image_poster_size">w185</string>
     
     //Discover response Keys
