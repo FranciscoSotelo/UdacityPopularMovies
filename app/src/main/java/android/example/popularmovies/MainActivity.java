@@ -2,40 +2,51 @@ package android.example.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.example.popularmovies.Utils.JsonUtils;
-import android.example.popularmovies.Utils.NetworkUtils;
 import android.example.popularmovies.Model.Movie;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-import java.io.IOException;
-import java.net.URL;
+import com.google.gson.JsonObject;
+
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements PostersAdapter.ListItemClickListener {
     private PostersAdapter mAdapter;
     private RecyclerView mPosterList;
 
     private static final String API_KEY = BuildConfig.API_KEY;
-
+    private Retrofit retrofit;
+    MovieAPI movieAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPosterList = (RecyclerView) findViewById(R.id.rv_posters);
+        mPosterList = findViewById(R.id.rv_posters);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
 
         mPosterList.setLayoutManager(layoutManager);
         mPosterList.setHasFixedSize(false);
 
-        MakeMoviesDiscoverQuery(getString(R.string.movie_database_baseURL_popularity));
+        retrofit = new Retrofit.Builder().baseUrl(getString(R.string.image_database_baseURL))
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        movieAPI = retrofit.create(MovieAPI.class);
+        CallGetPopularMovies();
     }
 
     @Override
@@ -48,41 +59,44 @@ public class MainActivity extends AppCompatActivity implements PostersAdapter.Li
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuItemSelected = item.getItemId();
         if(menuItemSelected == R.id.action_most_popular){
-            MakeMoviesDiscoverQuery(getString(R.string.movie_database_baseURL_popularity));
+           CallGetPopularMovies();
         }
         else if(menuItemSelected == R.id.action_top_rated){
-            MakeMoviesDiscoverQuery(getString(R.string.movie_database_baseURL_top_rated));
-
+            CallGetTopRatedMovies();
         }
         return true;
     }
 
-    private void MakeMoviesDiscoverQuery(String baseURL){
-        URL url = NetworkUtils.buildUrl(baseURL, API_KEY);
+    private void CallGetPopularMovies()
+    {
+        Call<JsonObject> call = movieAPI.getPopularMovies(API_KEY);
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                BuildPosterGrid(JsonUtils.parseMoviePosters(response.body().toString(), getApplicationContext()));
+            }
 
-        new MoviesDiscoveryQueryTask().execute(url);
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Log.d("MainActivity", t.getMessage());
+            }
+        });
     }
 
-    public class MoviesDiscoveryQueryTask extends AsyncTask<URL, Void, String> {
-        @Override
-        protected String doInBackground(URL... urls){
-            URL searchURL = urls[0];
-            String searchResults = null;
-            try{
-                searchResults = NetworkUtils.getResponseFromHttpUrl(searchURL);
-            }catch (IOException e){
-                e.printStackTrace();
+    private void CallGetTopRatedMovies()
+    {
+        Call<JsonObject> call = movieAPI.getTopRatedMovies(API_KEY);
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                BuildPosterGrid(JsonUtils.parseMoviePosters(response.body().toString(), getApplicationContext()));
             }
 
-            return searchResults;
-        }
-
-        @Override
-        protected void onPostExecute(String searchResults){
-            if(searchResults != null && !searchResults.equals("")){
-               BuildPosterGrid(JsonUtils.parseMoviePosters(searchResults, getBaseContext()));
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Log.d("MainActivity", t.getMessage());
             }
-        }
+        });
     }
 
     private void BuildPosterGrid(List<Movie> movies)
@@ -96,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements PostersAdapter.Li
         Context context = MainActivity.this;
         Class destinationActivity = MovieDetailsActivity.class;
         Intent intent = new Intent(context, destinationActivity);
-        intent.putExtra(Intent.EXTRA_TEXT, clickedItem.getJsonData());
+        intent.putExtra("data", clickedItem);
         startActivity(intent);
     }
 }

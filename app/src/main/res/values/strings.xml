@@ -3,9 +3,8 @@
     <string name="API_key"></string>
 
     <string name="app_name">Popular Movies</string>
-    <string name="image_database_baseURL">http://image.tmdb.org/t/p/</string>
-    <string name="movie_database_baseURL_popularity">https://api.themoviedb.org/3/movie/popular</string>
-    <string name="movie_database_baseURL_top_rated">https://api.themoviedb.org/3/movie/top_rated</string>
+    <string name="image_database_baseURL">https://api.themoviedb.org/3/movie/</string>
+    <string name="poster_baseURL">http://image.tmdb.org/t/p/</string>
     <string name="image_poster_size">w185</string>
     
     //Discover response Keys

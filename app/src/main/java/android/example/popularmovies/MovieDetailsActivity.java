@@ -1,11 +1,9 @@
 package android.example.popularmovies;
 
 import android.content.Intent;
-import android.example.popularmovies.Model.MovieDetails;
-import android.example.popularmovies.Utils.JsonUtils;
+import android.example.popularmovies.Model.Movie;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,9 +29,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
         tv_synopsis = findViewById(R.id.tv_details_synopsis);
 
         Intent intent = getIntent();
-        MovieDetails movieDetails = null;
-        if(intent.hasExtra(Intent.EXTRA_TEXT)){
-            movieDetails = JsonUtils.parseMovieDetails(intent.getStringExtra(Intent.EXTRA_TEXT), this);
+        Movie movieDetails = null;
+        if(intent.hasExtra("data")){
+            movieDetails = intent.getExtras().getParcelable("data");
         }
 
         if(movieDetails != null)
